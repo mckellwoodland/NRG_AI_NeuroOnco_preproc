@@ -158,6 +158,10 @@ def resample_images(root_dir, resample_size):
 
                 resampled_image = ResampleFilter.Execute(image)
 
+                # Threshold small values caused by interpolation errors.
+                threshold_mask = sitk.Greater(resampled_image, 1e-6)
+                resampled_image = sitk.Mask(resampled_image, threshold_mask)
+                
                 sitk.WriteImage(resampled_image, out_file)
     return out_dir
 
@@ -167,6 +171,7 @@ def slice_images(root_dir):
     out_dir = os.path.join(base_dir, 'NIFTI_SLICES')
 
     create_directory(out_dir)
+    create_directory("/output/testing")
 
     for root, dirs, files in os.walk(root_dir):
         for i_file in files:
@@ -176,12 +181,12 @@ def slice_images(root_dir):
 
                 file_name = i_file.split('.nii.gz')[0]
                 image = sitk.ReadImage(os.path.join(root, i_file), sitk.sitkFloat32)
-
+                sitk.WriteImage(image, os.path.join("/output/testing/",f"{file_name}.nii.gz"))
+                sitk.WriteImage(image[:, :, 0], os.path.join("/output/testing/",f"{file_name}_first_slice.nii.gz"))
                 for i_i_slice in range(0, image.GetDepth()):
                     out_file_name = os.path.join(out_dir, patient_ID + '+' + file_name + '+' + str(i_i_slice) + '.nii.gz')
                     i_slice = image[:, :, i_i_slice]
                     sitk.WriteImage(i_slice, out_file_name)
-
     return out_dir
 
 
