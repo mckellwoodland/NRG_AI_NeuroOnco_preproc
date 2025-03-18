@@ -122,6 +122,14 @@ if __name__ == '__main__':
     df = pd.read_csv(out_file_meta)
 
     # ~~~~~~~~~~~~~~~~~~~ Selection of final 4 scans - T1,T1c,T2,FLAIR - based on following rules/heuristics ~~~~~~~~~~~~~~~~~~~
+    # Match series description.
+    for index, row in df.iterrows():
+        if row['series_description'] == 'FLAIR':
+            df.at[index, 'prediction'] = 'Flair'
+        elif row['series_description'] == 'T1C':
+            df.at[index, 'prediction'] = 'T1c'
+        elif row['series_description'] == 'T2':
+            df.at[index, 'prediction'] = 'T2'
 
     # Rule: Keep only the scans of following types: 'T1', 'T1c', 'T2', 'Flair'
     df = df[df['prediction'].isin(['T1', 'T1c', 'T2', 'Flair'])]
