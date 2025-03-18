@@ -35,7 +35,7 @@ if [ $? -eq 0 ]; then
   fi
 
   # cleanup
-  rm -rf /output/SCANTYPES_TEMP
+  #rm -rf /output/SCANTYPES_TEMP
 fi
 
 if [[ $1 == *xnat* ]];then 
